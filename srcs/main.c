@@ -15,6 +15,7 @@ void	ft_free_split(char **str)
 	i = 0;
 	while(str[i])
 		i++;
+	i--;
 	while(i != -1)
 	{
 		free(str[i]);
@@ -68,7 +69,7 @@ int	get_length(char **argv, t_fdf *s)
 	return (i);
 }
 
-int **get_map(t_fdf *s, char **argv, int fd)
+int **get_map(int **s, char **argv, int fd)
 {
 	char	**str;
 	char	*line;
@@ -79,15 +80,19 @@ int **get_map(t_fdf *s, char **argv, int fd)
 	fd = open(argv[1], O_RDWR);
 	if (fd == -1)
 		return (NULL);
-	while (get_next_line(fd, &line) == 1 && i != s->length)
+	while (get_next_line(fd, &line) == 1)
 	{
 		j = 0;
+		// write(1, "1\n", 2);
 		str = ft_split(line, ' ');
 		if (str == NULL)
 			return (NULL);
-		while(str[j] && j != s->width)
+		// write(1, "1\n", 2);
+		while(str[j])
 		{
-			s->map[i][j] = ft_atoi(str[j]);
+			// write(1, "1\n", 2);
+			s[i][j] = ft_atoi(str[j]);
+			// write(1, "1\n", 2);
 			j++;
 		}
 		free(line);
@@ -95,31 +100,42 @@ int **get_map(t_fdf *s, char **argv, int fd)
 		i++;
 	}
 	close(fd);
-	return (s->map);
+	return (s);
 }
 
-int init_map(t_fdf *s, char **argv)
+int init_map(t_fdf **s, char **argv)
+{
+	int i;
+	int **arr;
+	i = 0;
+	arr = (int **)ft_calloc((*s)->length, sizeof(int *));
+	if((*s)->map == NULL)
+		return (error(*s));
+	while(i != (*s)->length + 1)
+	{
+		arr[i] = ft_calloc((*s)->width, sizeof(int));
+		if(arr[i] == NULL)
+			return (error(*s));
+		i++;
+	}
+	printf("\n|%d - width, %d - length|\n", (*s)->width, (*s)->length);
+	(*s)->map = get_map(arr, argv, -1);
+	if ((*s)->map == NULL)
+		return (error(*s));
+	return (1);
+}
+void free_t_fdf(t_fdf *s)
 {
 	int i;
 
 	i = 0;
-	s->map = malloc((s->length + 1) * sizeof(int *));
-	if(s->map == NULL)
-		return (error(s));
 	while(i != s->length)
 	{
-		s->map[i] = ft_calloc(s->width + 1, sizeof(int));
-		if(s->map[i] == NULL)
-			return (error(s));
+		free(s->map[i]);
 		i++;
 	}
-	printf("\n|%d - width, %d - length|\n", s->width, s->length);
-	s->map = get_map(s, argv, -1);
-	if (s->map == NULL)
-		return (error(s));
-	return (1);
+	free(s->map);
 }
-
 int	main(int argc, char **argv)
 {
 	t_fdf	*s;
@@ -137,7 +153,7 @@ int	main(int argc, char **argv)
 	}
 	s->width = get_width(argv, s);
 	s->length = get_length(argv, s);
-	init_map(s, argv);
+	init_map(&s, argv);
 	if (s->error)
 		return (0);
 	int i = 0;
@@ -153,4 +169,5 @@ int	main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
+	free_t_fdf(s);
 }
