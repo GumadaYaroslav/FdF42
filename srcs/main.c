@@ -15,7 +15,6 @@ void	ft_free_split(char **str)
 	i = 0;
 	while(str[i])
 		i++;
-	i--;
 	while(i != -1)
 	{
 		free(str[i]);
@@ -99,6 +98,8 @@ int **get_map(int **s, char **argv, int fd)
 		ft_free_split(str);
 		i++;
 	}
+	// free(line);
+	// ft_free_split(str);
 	close(fd);
 	return (s);
 }
@@ -109,6 +110,7 @@ int init_map(t_fdf **s, char **argv)
 	int **arr;
 	i = 0;
 	arr = (int **)ft_calloc((*s)->length, sizeof(int *));
+	printf("%lu -> sizeof(arr)\n", (*s)->length * sizeof(int *));
 	if((*s)->map == NULL)
 		return (error(*s));
 	while(i != (*s)->length + 1)
@@ -134,7 +136,9 @@ void free_t_fdf(t_fdf *s)
 		free(s->map[i]);
 		i++;
 	}
+	free(s->map[i]);
 	free(s->map);
+	free(s);
 }
 int	main(int argc, char **argv)
 {
@@ -169,5 +173,8 @@ int	main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
+	printf("%lu -> sizeof(s)\n", sizeof(t_fdf));
+	printf("%lu -> sizeof(s->map)\n", sizeof(int **));
 	free_t_fdf(s);
+	while(1);
 }
