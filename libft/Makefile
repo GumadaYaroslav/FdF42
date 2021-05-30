@@ -25,6 +25,7 @@ LIST =  ft_bzero.c		ft_calloc.c		ft_isalnum.c\
 		ft_itoa.c		ft_putendl_fd.c	ft_putchar_fd.c\
 		ft_putstr_fd.c	ft_putnbr_fd.c	ft_strmapi.c\
 		ft_split.c		ft_strlen_l_bonus.c	ft_str_rev_bonus.c\
+		ft_atoi_base.c
 
 
 LIST_B =ft_lstnew.c			ft_lstadd_front.c	ft_lstlast.c\
