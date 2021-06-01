@@ -1,9 +1,8 @@
-SRCS := srcs/main.c
+SRCS := srcs/main.c srcs/draw.c
 
 FLAGS = -Wall -Wextra -Werror
 
-# INC = ../includes/push_swap.h
-#LIBFT	= ./libft/libft.a
+FRAEMWORKS=-framework OpenGL -framework AppKit
 
 NAME	= FdF
 
@@ -18,7 +17,9 @@ all:	$(NAME)
 $(NAME): $(SRCS)
 	$(MAKE) -C ./libft
 	cp libft/libft.a .
-	$(GCC) -g $(FLAGS) -o FdF libft.a $(SRCS) $(HEADER)
+	$(MAKE) -C minilibx_macos/ all
+	cp minilibx_macos/libmlx.a .
+	$(GCC) -g $(FLAGS) -o FdF libft.a libmlx.a $(SRCS) $(FRAEMWORKS) $(HEADER)
 
 clean:
 	$(MAKE) clean -C ./libft
