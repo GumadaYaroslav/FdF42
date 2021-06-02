@@ -4,7 +4,7 @@ FLAGS = -Wall -Wextra -Werror
 
 FRAEMWORKS=-framework OpenGL -framework AppKit
 
-NAME	= FdF
+NAME	= fdf
 
 HEADER	= -I includes
 
@@ -19,14 +19,23 @@ $(NAME): $(SRCS)
 	cp libft/libft.a .
 	$(MAKE) -C minilibx_macos/ all
 	cp minilibx_macos/libmlx.a .
-	$(GCC) -g $(FLAGS) -o FdF libft.a libmlx.a $(SRCS) $(FRAEMWORKS) $(HEADER)
+	$(GCC) -g $(FLAGS) -o fdf libft.a libmlx.a $(SRCS) $(FRAEMWORKS) $(HEADER)
+
+bonus: $(SRCS)
+	$(MAKE) -C ./libft
+	cp libft/libft.a .
+	$(MAKE) -C minilibx_macos/ all
+	cp minilibx_macos/libmlx.a .
+	$(GCC) -g $(FLAGS) -o fdf libft.a libmlx.a $(SRCS) $(FRAEMWORKS) $(HEADER)
 
 clean:
 	$(MAKE) clean -C ./libft
+	$(MAKE) clean -C ./minilibx_macos
 	rm -rf $(OBJS)
 
 fclean: clean
 	$(MAKE) fclean -C ./libft
+	$(MAKE) fclean -C ./minilibx_macos
 	rm -rf libft.a
 	rm -rf checker
 	rm -rf $(NAME)

@@ -22,10 +22,10 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-void	perspective(float *x, float *y, float z)
+void	perspective(float *x, float *y, float z, float angle)
 {
-	*x = (*x - *y) * cos(0.8);
-	*y = (*x + *y) * sin(0.8) - z;
+	*x = (*x - *y) * cos(angle);
+	*y = (*x + *y) * sin(angle) - z;
 }
 
 void	isometric(t_dot *a, t_dot *b, t_fdf *s)
@@ -34,17 +34,17 @@ void	isometric(t_dot *a, t_dot *b, t_fdf *s)
 	b->y = b->y * s->zoom;
 	a->y = a->y * s->zoom;
 	a->x = a->x * s->zoom;
-	b->height = b->height * s->zoom / 5;
-	a->height = a->height * s->zoom / 5;
-	perspective(&a->x, &a->y, a->height);
-	perspective(&b->x, &b->y, b->height);
+	b->height = b->height * s->zoom / s->scale;
+	a->height = a->height * s->zoom / s->scale;
+	perspective(&a->x, &a->y, a->height, s->angle);
+	perspective(&b->x, &b->y, b->height, s->angle);
 	b->x = b->x + s->x_shift;
 	b->y = b->y + s->y_shift;
 	a->y = a->y + s->y_shift;
 	a->x = a->x + s->x_shift;
 }
 
-void	draw_line(t_dot a, t_dot b, t_data *data, t_fdf *s)//[1,1 ] [3, 12]
+void	draw_line(t_dot a, t_dot b, t_fdf *s)//[1,1 ] [3, 12]
 {
 	float x_step;
 	float y_step;
@@ -64,7 +64,7 @@ void	draw_line(t_dot a, t_dot b, t_data *data, t_fdf *s)//[1,1 ] [3, 12]
 	{
 		if (a.x >= s->img_size_x || a.y >= s->img_size_y || a.x < 0 || a.y < 0)
 			break;
-		mlx_pixel_put(s->mlx_ptr, s->win_ptr, a.x, a.y, a.calor);
+		my_mlx_pixel_put(s->data, a.x, a.y, a.calor);
 		a.x += x_step;
 		a.y += y_step;
 		if (a.x >= s->img_size_x || a.y >= s->img_size_y || a.x < 0 || a.y < 0)
@@ -72,7 +72,7 @@ void	draw_line(t_dot a, t_dot b, t_data *data, t_fdf *s)//[1,1 ] [3, 12]
 	}
 }
 
-void	draw(t_data *data, t_fdf *s)
+void	draw(t_fdf *s)
 {
 	int		y;
 	int		x;
@@ -85,16 +85,16 @@ void	draw(t_data *data, t_fdf *s)
 		{
 
 			if(y == s->length - 1 && x + 1 < s->width)
-				draw_line(*s->map[y][x], *s->map[y][x + 1], data, s);
+				draw_line(*s->map[y][x], *s->map[y][x + 1], s);
 			else if (x == s->width - 1 && y != s->length - 1)
 			{
-				draw_line(*s->map[y][x], *s->map[y + 1][x], data, s);
+				draw_line(*s->map[y][x], *s->map[y + 1][x], s);
 				break ;
 			}
 			else if (x < s->width - 1 && y != s->length - 1)
 			{
-				draw_line(*s->map[y][x], *s->map[y][x + 1], data, s);
-				draw_line(*s->map[y][x], *s->map[y + 1][x], data, s);
+				draw_line(*s->map[y][x], *s->map[y][x + 1], s);
+				draw_line(*s->map[y][x], *s->map[y + 1][x], s);
 			}
 			if (s->map[y][x]->last)
 				break ;
