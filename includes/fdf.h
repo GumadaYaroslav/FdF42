@@ -51,6 +51,6 @@ float	mod(float a);
 float	max(float a, float b);
 int		get_width(char **argv, t_fdf *s);
 int		get_length(char **argv, t_fdf *s);
-int		init_map(t_fdf *s, char **argv, int j);
 void	draw(t_fdf *s);
+int		init_map(t_fdf *s, char **argv, int j, int i);
 #endif
