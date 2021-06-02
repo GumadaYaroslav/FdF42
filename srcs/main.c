@@ -11,7 +11,7 @@ int	error(t_fdf *s)
 void init_strukt(t_fdf *s)
 {
 	s->error = 0;
-	s->height = 0;
+	s->zoom = 30;
 	s->img_size_x = 0;
 	s->img_size_y = 0;
 	s->length = 0;
@@ -19,6 +19,8 @@ void init_strukt(t_fdf *s)
 	s->mlx_ptr = NULL;
 	s->width = 0;
 	s->win_ptr = NULL;
+	s->x_shift = 150;
+	s->y_shift = 150;
 }
 
 void	ft_free_split(char **str)
@@ -85,7 +87,7 @@ int	get_length(char **argv, t_fdf *s)
 	return (i);
 }
 
-void	help_get_arrays(t_dot ***s, char **str, int i)
+void	help_get_arrays(t_dot ***s, char **str, int i, t_fdf *fdf)
 {
 	int		j;
 	char	*tmp;
@@ -96,6 +98,10 @@ void	help_get_arrays(t_dot ***s, char **str, int i)
 		s[i][j]->height = ft_atoi(str[j]);
 		s[i][j]->x = j;
 		s[i][j]->y = i;
+		if(j == fdf->width - 1)
+			s[i][j]->last = 1;
+		else
+			s[i][j]->last = 0;
 		tmp = ft_strchr(str[j], ',');
 		if (tmp)
 			s[i][j]->calor = ft_atoi_base(tmp + 3, "0123456789ABCDEF", 16);
@@ -103,7 +109,7 @@ void	help_get_arrays(t_dot ***s, char **str, int i)
 	}
 }
 
-t_dot ***get_arrays(t_dot ****s, char **argv, int fd)
+t_dot ***get_arrays(t_dot ****s, char **argv, int fd, t_fdf *fdf)
 {
 	char	**str;
 	char	*line;
@@ -122,7 +128,7 @@ t_dot ***get_arrays(t_dot ****s, char **argv, int fd)
 		if (str == NULL)
 			return 0;
 		// write(1, "1\n", 2);
-		help_get_arrays(*s, str, i);
+		help_get_arrays(*s, str, i, fdf);
 		free(line);
 		ft_free_split(str);
 		i++;
@@ -152,6 +158,7 @@ int init_map(t_fdf *s, char **argv, int j)
 			arr[i][j] = ft_calloc(1, sizeof(t_dot));
 			j++;
 		}
+		printf("%d -it's me CALLOC!\n", j);
 		i++;
 	}
 	i = 0;
@@ -173,7 +180,7 @@ int init_map(t_fdf *s, char **argv, int j)
 	// 	i++;
 	// }
 	// printf("\n|%d - width, %d - length|\n", s->width, s->length);
-	s->map = get_arrays(&arr, argv, -1);
+	s->map = get_arrays(&arr, argv, -1, s);
 	return (1);
 }
 void free_t_fdf(t_fdf *s)
@@ -198,6 +205,27 @@ void free_t_fdf(t_fdf *s)
 	free(s->map);
 	// free(s);
 }
+
+int button_press(int btn, t_fdf *s, t_data *data)
+{
+	(void)s;
+	if (btn == 53)
+		exit(1);
+	if (btn == 123)
+		s->x_shift -=10;
+	if (btn == 126)
+		s->x_shift +=10;
+	if (btn == 125)
+		s->y_shift +=10;
+	if (btn == 124)
+		s->y_shift -=10;
+	mlx_clear_window(s->mlx_ptr, s->win_ptr);
+	draw(data, s);
+	ft_putnbr_fd(btn, 1);
+	write(1, "\n", 1);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_fdf	s;
@@ -208,20 +236,22 @@ int	main(int argc, char **argv)
 		return (0);		
 	}
 	init_strukt(&s);
-	s.img_size_x = 1000;
-	s.img_size_y = 1000;
+	s.img_size_x = 2000;
+	s.img_size_y = 2000;
 	s.mlx_ptr = mlx_init();
 	s.width = get_width(argv, &s);
 	s.length = get_length(argv, &s);
-	s.win_ptr = mlx_new_window(s.mlx_ptr, 1000, 1000, "FdF");
+	printf("%d - width, %d - length\n", s.width, s.length);
+	s.win_ptr = mlx_new_window(s.mlx_ptr, 2000, 2000, "FdF");
 	init_map(&s, argv, 0);
-	write(1, "1\n", 2);
+	// write(1, "1\n", 2);
 	if (s.error)
 		return (0);
-	data.img = mlx_new_image(s.mlx_ptr, 1000, 1000);
+	data.img = mlx_new_image(s.mlx_ptr, 2000, 2000);
 	data.addr = mlx_get_data_addr(data.img, &data.bits_per_pixel, &data.line_length, &data.endian);
 	draw(&data, &s);
 	mlx_put_image_to_window(s.mlx_ptr, s.win_ptr, data.img, 0, 0);
+	mlx_key_hook(s.win_ptr, button_press, &s);
 	mlx_loop(s.mlx_ptr);
 	// mlx_key_hook(s.win_ptr, ,NULL);
 	// int i;

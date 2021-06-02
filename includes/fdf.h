@@ -2,12 +2,14 @@
 # define FDF_H
 # include "libft.h"
 # include <mlx.h>
+# include <math.h>
 typedef struct s_dot
 {
-	int				height;
+	float			height;
 	unsigned long	calor;
-	int				x;
-	int				y;
+	int				last;
+	float			x;
+	float			y;
 }				t_dot;
 
 typedef struct	s_data {
@@ -22,7 +24,9 @@ typedef struct s_fdf
 {
 	int		width;
 	int		length;
-	int		height;
+	int		zoom;
+	int		x_shift;
+	int		y_shift;
 	t_dot	***map;
 	int		error;
 	void	*mlx_ptr;
