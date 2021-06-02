@@ -17,34 +17,9 @@ void	init_strukt(t_fdf *s)
 	s->x_shift = s->img_size_x / 3;
 	s->y_shift = s->img_size_y / 3;
 	s->data = NULL;
-	s->scale = 1;
+	s->scale = 4;
 	s->angle = 0.8;
 }
-
-// int do_shit_for_test(int btn, t_fdf *s)
-// {
-// 	menage_param_cheng(btn, s);
-// 	if (btn == 53)
-// 		exit(1);
-// 	if (btn == 123)
-// 		s->x_shift -=10;
-// 	if (btn == 124)
-// 		s->x_shift +=10;
-// 	if (btn == 126)
-// 		s->y_shift -=10;
-// 	if (btn == 125)
-// 		s->y_shift +=10;
-// 	mlx_clear_window(s->mlx_ptr, s->win_ptr);
-// 	mlx_destroy_image(s->mlx_ptr, s->data->img);
-// 	s->data->img = mlx_new_image(s->mlx_ptr, 2000, 2000);
-// 	s->data->addr = mlx_get_data_addr(s->data->img,
-//  &s->data->bits_per_pixel, &s->data->line_length, &s->data->endian);
-// 	draw(s);
-// 	mlx_put_image_to_window(s->mlx_ptr, s->win_ptr, s->data->img, 0, 0);
-// 	ft_putnbr_fd(btn, 1);
-// 	write(1, "\n", 1);
-// 	return (0);
-// }
 
 int	main(int argc, char **argv)
 {
@@ -61,7 +36,7 @@ int	main(int argc, char **argv)
 	s.width = get_width(argv, &s);
 	s.length = get_length(argv, &s);
 	s.win_ptr = mlx_new_window(s.mlx_ptr, 2000, 2000, "FdF");
-	init_map(&s, argv, 0);
+	init_map(&s, argv, 0, 0);
 	if (s.error)
 		return (0);
 	data.img = mlx_new_image(s.mlx_ptr, 2000, 2000);

@@ -98,20 +98,24 @@ static t_dot	***get_arrays(t_dot ****s, char **argv, int fd, t_fdf *fdf)
 	return (*s);
 }
 
-int	init_map(t_fdf *s, char **argv, int j)
+int	init_map(t_fdf *s, char **argv, int j, int i)
 {
-	int		i;
 	t_dot	***arr;
 
-	i = 0;
 	arr = (t_dot ***)ft_calloc(s->length, sizeof(t_dot **));
+	if (arr == NULL)
+		return (error(s));
 	while (i < s->length)
 	{
 		arr[i] = ft_calloc(s->width, sizeof(t_dot *));
+		if (arr[i] == NULL)
+			return (error(s));
 		j = 0;
 		while (j < s->width)
 		{
 			arr[i][j] = ft_calloc(1, sizeof(t_dot));
+			if (arr[i][j] == NULL)
+				return (error(s));
 			j++;
 		}
 		i++;

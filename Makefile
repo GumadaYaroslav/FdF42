@@ -16,41 +16,33 @@ GCC = gcc
 
 FLAGS = -Wall -Werror -Wextra
 
-OBJ := $(addprefix obj/, $(SRC:.c=.o))
-# OBJS =  $(addprefix srcs/, $(SRC:.c=.o))
-# %.o: %.c	includes/fdf.h
-# 	$(GCC) $(FLAGS) -c $< -o $@
-srcs/%.o: srcs/%.c
-		$(GCC) -c $(FLAGS) $< -o $@
-
 all:	$(NAME)
 
-$(NAME): srcs/ $(SRCS)
+$(NAME): srcs/ $(SRCS) $(HEADERS)
 	$(MAKE) -C ./libft
 	cp libft/libft.a .
 	$(MAKE) -C minilibx_macos/ all
 	cp minilibx_macos/libmlx.a .
-	# $(GCC) -c $(FLAGS) $(SRCS)
+	$(GCC) -c $(FLAGS) $(SRCS)
+	$(GCC) $(FLAGS) -o fdf libft.a libmlx.a $(O_FILES) $(FRAEMWORKS) $(HEADER)
 
-	$(GCC) $(FLAGS) -o fdf libft.a libmlx.a $(OBJECTS) $(FRAEMWORKS) $(HEADER)
-
-bonus: $(SRCS)
+bonus: srcs/ $(SRCS) $(HEADERS)
 	$(MAKE) -C ./libft
 	cp libft/libft.a .
 	$(MAKE) -C minilibx_macos/ all
 	cp minilibx_macos/libmlx.a .
-	# $(GCC) -c $(FLAGS) $(SRCS)
-	$(GCC) -g $(FLAGS) -o fdf libft.a libmlx.a $(OBJS) $(FRAEMWORKS) $(HEADER)
+	$(GCC) -c $(FLAGS) $(SRCS)
+	$(GCC) $(FLAGS) -o fdf libft.a libmlx.a $(O_FILES) $(FRAEMWORKS) $(HEADER)
 
 clean:
 	$(MAKE) clean -C ./libft
 	$(MAKE) clean -C ./minilibx_macos
-	rm -rf $(OBJS)
+	rm -rf libft.a
+	rm -rf libmlx.a
+	rm -rf $(O_FILES)
 
 fclean: clean
 	$(MAKE) fclean -C ./libft
-	rm -rf libft.a
-	rm -rf checker
 	rm -rf $(NAME)
 
 re: fclean all
