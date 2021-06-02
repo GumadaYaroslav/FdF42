@@ -12,7 +12,8 @@ typedef struct s_dot
 	float			y;
 }				t_dot;
 
-typedef struct	s_data {
+typedef struct s_data
+{
 	void	*img;
 	char	*addr;
 	int		bits_per_pixel;
@@ -39,5 +40,17 @@ typedef struct s_fdf
 }				t_fdf;
 void	draw_line(t_dot a, t_dot b, t_fdf *s);
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+void	draw(t_fdf *s);
+int		button_press(int btn, t_fdf *s);
+void	menage_param_chenges1(int btn, t_fdf *s);
+void	menage_param_chenges2(int btn, t_fdf *s);
+int		error(t_fdf *s);
+void	ft_free_split(char **str);
+void	free_t_fdf(t_fdf *s);
+float	mod(float a);
+float	max(float a, float b);
+int		get_width(char **argv, t_fdf *s);
+int		get_length(char **argv, t_fdf *s);
+int		init_map(t_fdf *s, char **argv, int j);
 void	draw(t_fdf *s);
 #endif

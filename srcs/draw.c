@@ -1,25 +1,12 @@
 #include "../includes/fdf.h"
 #include <stdio.h>
-float		mod(float a)
-{
-	if (a > 0)
-		return (a);
-	return (-a);
-}
 
-float	max(float a, float b)
-{
-	if (mod(a) > mod (b))
-		return (mod(a));
-	return (mod(b));
-
-}
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
+	*(unsigned int *)dst = color;
 }
 
 void	perspective(float *x, float *y, float z, float angle)
@@ -44,31 +31,29 @@ void	isometric(t_dot *a, t_dot *b, t_fdf *s)
 	a->x = a->x + s->x_shift;
 }
 
-void	draw_line(t_dot a, t_dot b, t_fdf *s)//[1,1 ] [3, 12]
+void	draw_line(t_dot a, t_dot b, t_fdf *s)
 {
-	float x_step;
-	float y_step;
-	float maximum;
+	float	x_step;
+	float	y_step;
+	float	maximum;
 
 	isometric(&a, &b, s);
 	x_step = b.x - a.x;
 	y_step = b.y - a.y;
 	maximum = max(x_step, y_step);
-	// write(1, "1\n", 2);
 	x_step /= maximum;
 	y_step /= maximum;
 	if (a.calor == 0)
-		a.calor = 0x00ff00; 
-	// printf("%.2fx - %.2fx1, %.2fy - %.2fy1\n", a.x, b.x, a.y, b.y);
-	while((int)(a.x - b.x) || (int)(a.y - b.y))
+		a.calor = 0x00ff00;
+	while ((int)(a.x - b.x) || (int)(a.y - b.y))
 	{
 		if (a.x >= s->img_size_x || a.y >= s->img_size_y || a.x < 0 || a.y < 0)
-			break;
+			break ;
 		my_mlx_pixel_put(s->data, a.x, a.y, a.calor);
 		a.x += x_step;
 		a.y += y_step;
 		if (a.x >= s->img_size_x || a.y >= s->img_size_y || a.x < 0 || a.y < 0)
-			break;
+			break ;
 	}
 }
 
@@ -83,21 +68,17 @@ void	draw(t_fdf *s)
 		x = 0;
 		while (x != s->width)
 		{
-
-			if(y == s->length - 1 && x + 1 < s->width)
+			if (y == s->length - 1 && x + 1 < s->width)
 				draw_line(*s->map[y][x], *s->map[y][x + 1], s);
 			else if (x == s->width - 1 && y != s->length - 1)
 			{
 				draw_line(*s->map[y][x], *s->map[y + 1][x], s);
-				break ;
 			}
 			else if (x < s->width - 1 && y != s->length - 1)
 			{
 				draw_line(*s->map[y][x], *s->map[y][x + 1], s);
 				draw_line(*s->map[y][x], *s->map[y + 1][x], s);
 			}
-			if (s->map[y][x]->last)
-				break ;
 			x++;
 		}
 		y++;
